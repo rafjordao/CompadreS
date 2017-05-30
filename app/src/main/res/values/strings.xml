@@ -3,6 +3,15 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <color name="gray">#231f20</color>
+    <color name="topOpenShop">#ffffff</color>
+    <color name="bottomOrder">#ff9933</color>
+    <color name="opened">#33cc33</color>
+    <color name="closed">#ff0000</color>
+    <color name="closedBottonBar">#808080</color>
     <string name="action_settings">Settings</string>
+    <string name="openedText">Estamos Funcionando</string>
+    <string name="closedText">Abrimos de quarta a domingo das 18h às 23h</string>
+    <string name="openedBottomText">Faça Já seu Pedido!</string>
+    <string name="closedBottomText">Faça seu pedido a partir das 18h!</string>
 </resources>
