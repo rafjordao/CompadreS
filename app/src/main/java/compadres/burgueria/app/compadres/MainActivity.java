@@ -12,9 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+
+import java.security.KeyStore;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    boolean logged = true;
+    NavigationView navigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +45,20 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.getHeaderView(0);
+
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId()==R.id.textView){
+                    logged=!logged;
+                }
+            }
+        });
+
     }
 
     @Override
@@ -68,11 +87,14 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            logged=!logged;
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -80,22 +102,40 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_burguer) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_terms) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_contact) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_carte) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_order) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(logged){
+            navigationView.getMenu().findItem(R.id.nav_terms).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_terms).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_carte).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_order).setVisible(false);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onStart();
     }
 }
