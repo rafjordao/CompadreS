@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "734070607141",
+    "firebase_url": "https://compadres-26673.firebaseio.com",
+    "project_id": "compadres-26673",
+    "storage_bucket": "compadres-26673.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734070607141:android:d98176055b8d61a6",
+        "android_client_info": {
+          "package_name": "compadres.burgueria.app.compadres"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734070607141-enm5snk2nefovnpnoi2iksv1qahhvmli.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "compadres.burgueria.app.compadres",
+            "certificate_hash": "175aa1a4dd82191edc49ed1e462199568cbd21f8"
+          }
+        },
+        {
+          "client_id": "734070607141-76tb3e6mias1h811ont5ft6r8lqg19ei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAs-fjSSlTGsG2a_XxImEzUE4tyaTgbYlI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "734070607141-76tb3e6mias1h811ont5ft6r8lqg19ei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

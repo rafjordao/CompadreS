@@ -12,44 +12,50 @@
     tools:layout_editor_absoluteX="0dp"
     >
 
-    <TextView
-        android:id="@+id/textView2"
+    <FrameLayout
+        android:id="@+id/my_frame"
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:layout_gravity="top"
-        android:background="@color/topOpenShop"
-        android:gravity="center"
-        android:text="@string/openedText"
-        android:textColor="@color/opened"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:cursorVisible="false"
-        />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="209dp"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_logo_inicial"
-        tools:layout_editor_absoluteX="28dp"
-        tools:layout_editor_absoluteY="123dp"
-        android:layout_centerVertical="true"
-        />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_gravity="top"
+            android:background="@color/topOpenShop"
+            android:gravity="center"
+            android:text="@string/openedText"
+            android:textColor="@color/opened"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="38dp"
-        android:background="@color/bottomOrder"
-        android:gravity="center"
-        android:text="@string/openedBottomText"
-        android:textColor="@color/topOpenShop"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        tools:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="209dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_logo_inicial"
+            tools:layout_editor_absoluteX="28dp"
+            tools:layout_editor_absoluteY="123dp"
+            android:layout_centerVertical="true"
+            />
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:background="@color/bottomOrder"
+            android:gravity="center"
+            android:text="@string/openedBottomText"
+            android:textColor="@color/topOpenShop"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            tools:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            />
+
+    </FrameLayout>
 
 </RelativeLayout>
