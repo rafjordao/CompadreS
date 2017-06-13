@@ -1,8 +1,11 @@
 package compadres.burgueria.app.compadres;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,14 +16,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.security.KeyStore;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     boolean logged = true;
     NavigationView navigationView;
+
 
 
     @Override
@@ -104,10 +110,16 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_burguer) {
             // Handle the camera action
+            List<Fragment> listaFragmento = getSupportFragmentManager().getFragments();
+            for(Fragment frag:listaFragmento){
+                getSupportFragmentManager().beginTransaction().remove(frag).commit();
+            }
+
         } else if (id == R.id.nav_contact) {
 
         } else if (id == R.id.nav_carte) {
-
+            CardapioFragment cardapio = new CardapioFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.conteudo_fragment, cardapio).commit();
         } else if (id == R.id.nav_order) {
 
         }
@@ -121,11 +133,9 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         if(logged){
-            navigationView.getMenu().findItem(R.id.nav_terms).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
         } else {
-            navigationView.getMenu().findItem(R.id.nav_terms).setVisible(true);
             navigationView.getMenu().findItem(R.id.nav_carte).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_order).setVisible(false);
         }
