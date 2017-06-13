@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_burguer) {
             // Handle the camera action
-        } else if (id == R.id.nav_terms) {
-
         } else if (id == R.id.nav_contact) {
 
         } else if (id == R.id.nav_carte) {
