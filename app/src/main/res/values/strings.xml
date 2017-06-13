@@ -14,4 +14,6 @@
     <string name="closedText">Abrimos de quarta a domingo das 18h às 23h</string>
     <string name="openedBottomText">Faça Já seu Pedido!</string>
     <string name="closedBottomText">Faça seu pedido a partir das 18h!</string>
+    <string name="userName">Olá Visitante!</string>
+    <string name="loginLink">Fazer login </string>
 </resources>
