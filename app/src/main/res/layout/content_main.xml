@@ -11,25 +11,13 @@
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp"
     >
+    <!-- android:background="@color/gray"  -->
 
-    <FrameLayout
-        android:id="@+id/my_frame"
+    <android.support.v7.widget.ContentFrameLayout
+        android:id="@+id/conteudo_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:layout_gravity="top"
-            android:background="@color/topOpenShop"
-            android:gravity="center"
-            android:text="@string/openedText"
-            android:textColor="@color/opened"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:cursorVisible="false"
-            />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -42,20 +30,7 @@
             android:layout_centerVertical="true"
             />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:background="@color/bottomOrder"
-            android:gravity="center"
-            android:text="@string/openedBottomText"
-            android:textColor="@color/topOpenShop"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            tools:layout_width="match_parent"
-            android:layout_gravity="bottom"
-            />
 
-    </FrameLayout>
+    </android.support.v7.widget.ContentFrameLayout>
 
 </RelativeLayout>
