@@ -21,5 +21,13 @@
     <string name="title_bebida">BEBIDAS</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="hamburgueres">
+        <item>Compadre</item>
+        <item>Comadre</item>
+    </string-array>
+    <string-array name="bebidas">
+        <item>Coca-Cola</item>
+        <item>Soda</item>
+    </string-array>
+
 </resources>
