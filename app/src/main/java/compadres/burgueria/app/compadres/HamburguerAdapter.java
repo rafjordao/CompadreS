@@ -31,10 +31,12 @@ public class HamburguerAdapter extends ArrayAdapter<Hamburguer> {
 
         TextView nomeBurguer = (TextView) rowView.findViewById(R.id.burguer_nome);
         TextView descricaoBurguer = (TextView) rowView.findViewById(R.id.burguer_descricao);
+        TextView precoBurguer = (TextView) rowView.findViewById(R.id.burguer_preco);
         ImageView imagemBurguer = (ImageView) rowView.findViewById(R.id.burguer_imagem);
 
         nomeBurguer.setText(elementos.get(position).getNome());
         descricaoBurguer.setText(elementos.get(position).getDescricao());
+        precoBurguer.setText("R$ " + elementos.get(position).getPreco());
         imagemBurguer.setImageResource(elementos.get(position).getImagem());
 
         return rowView;

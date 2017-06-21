@@ -4,13 +4,13 @@ package compadres.burgueria.app.compadres;
  * Created by PEDRONETO on 20/06/2017.
  */
 
-public class Hamburguer {
+public class Bebida {
     private String nome;
     private String descricao;
     private float preco;
     private int imagem; // vai armazenar o identificador do recurso
 
-    public Hamburguer(String nome, String descricao, float preco,int imagem){
+    public Bebida(String nome, String descricao, float preco,int imagem){
         this.nome = nome;
         this.descricao = descricao;
         this.preco = preco;
@@ -21,16 +21,17 @@ public class Hamburguer {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public float getPreco() {
         return preco;
     }
 
     public void setPreco(float preco) {
         this.preco = preco;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+
     }
 
     public String getDescricao() {
