@@ -25,7 +25,8 @@
     </group>
 
     <item android:title=""
-	android:visible="false">
+	android:visible="false"
+        android:id="@+id/nav_sair_item">
         <menu>
             <item
                 android:id="@+id/nav_sair"

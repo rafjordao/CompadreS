@@ -19,7 +19,10 @@
     <string name="loginLink">Fazer login </string>
     <string name="title_hamburgueres">HAMBURGUERES</string>
     <string name="title_bebida">BEBIDAS</string>
-
+    <string name="loading">Carregando</string>
+    <!-- FACEBOOK STRINGS -->
+    <string name="facebook_app_id">1958442941059790</string>
+    <string name="fb_login_protocol_scheme">fb1958442941059790</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string-array name="hamburgueres">
         <item>Compadre</item>
@@ -29,5 +32,8 @@
         <item>Coca-Cola</item>
         <item>Soda</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
