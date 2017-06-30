@@ -1,6 +1,7 @@
 package compadres.burgueria.app.compadres;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,18 +51,34 @@ public class CardapioFragment extends Fragment {
                     case R.id.navigation_hamburgueres:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Hamburgueres", Toast.LENGTH_SHORT).show();
-                        ArrayList<Produto> hamburguers = addHamburguer();
+                        final ArrayList<Produto> hamburguers = addHamburguer();
                         adapter = new ProdutoAdapter(getActivity(),hamburguers);
                         lista.setAdapter(adapter);
+                        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                                intent.putExtra("objeto", hamburguers.get(position));
+                                startActivity(intent);
+                            }
+                        });
                         return true;
                     case R.id.navigation_bebida:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Bebidas", Toast.LENGTH_SHORT).show();
                         //adapter = ArrayAdapter.createFromResource(getActivity(), R.array.bebidas, android.R.layout.simple_list_item_1);
                         //lista.setAdapter(adapter);
-                        ArrayList<Produto> bebidas = addBebida();
+                        final ArrayList<Produto> bebidas = addBebida();
                         adapter = new ProdutoAdapter(getActivity(),bebidas);
                         lista.setAdapter(adapter);
+                        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                                intent.putExtra("objeto", bebidas.get(position));
+                                startActivity(intent);
+                            }
+                        });
                         return true;
                 }
                 return false;
@@ -71,9 +89,17 @@ public class CardapioFragment extends Fragment {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //setAdapterHamburger (o codigo que ta no switch case acima - isolar em um metodo)
-        ArrayList<Produto> hamburguers = addHamburguer();
+        final ArrayList<Produto> hamburguers = addHamburguer();
         adapter = new ProdutoAdapter(getActivity(),hamburguers);
         lista.setAdapter(adapter);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                intent.putExtra("objeto", hamburguers.get(position));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

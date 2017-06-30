@@ -1,10 +1,12 @@
 package compadres.burgueria.app.compadres;
 
+import java.io.Serializable;
+
 /**
  * Created by Pedro Neto on 30/06/2017.
  */
 
-public class Produto {
+public class Produto implements Serializable{
     private String nome;
     private String tipo;
     private String descricao;

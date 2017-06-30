@@ -13,6 +13,7 @@
         android:inputType="textPassword" android:id="@+id/txtPassword"
         android:layout_width="match_parent"
         android:hint="Senha"/>
+    <!--
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout2">
@@ -26,6 +27,7 @@
             android:textStyle="bold"
             />
     </LinearLayout>
+    -->
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout1">
