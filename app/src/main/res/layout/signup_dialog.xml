@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_height="match_parent"
     android:paddingLeft="10dp" android:paddingRight="10dp"
-    android:background="#fff" android:layout_width="350dp"
-    android:paddingTop="10dp">
+    android:background="#fff" android:layout_width="280dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <EditText android:layout_height="wrap_content"
         android:inputType="text" android:id="@+id/signUpEmail"
         android:layout_width="match_parent"
-        android:hint="E-mail"/>
+        android:hint="E-mail"
+        android:paddingTop="10dp"/>
     <EditText android:layout_height="wrap_content"
         android:inputType="textPassword" android:id="@+id/signUpPassword"
         android:layout_width="match_parent"

@@ -127,10 +127,11 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        /*/FaceBook
+        //FaceBook
         FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
         callbackManager = CallbackManager.Factory.create();
-        /*/
+        //
 
     }
 
@@ -205,11 +206,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if(logged){
 
-        } else {
-
-        }
     }
 
     @Override
@@ -236,7 +233,7 @@ public class MainActivity extends AppCompatActivity
 
             /*/Facebook login
             facebookLoginButton = (LoginButton) findViewById(R.id.button_facebook_login);
-            facebookLoginButton.setReadPermissions("email", "public_profile");
+            //facebookLoginButton.setReadPermissions("email");
             facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
@@ -316,7 +313,7 @@ public class MainActivity extends AppCompatActivity
 
     protected void setSignUpUser() {
         user = new User();
-        user.setName(signUpName.getText().toString());
+        user.setDisplayName(signUpName.getText().toString());
         user.setPhoneNumber(signUpPhone.getText().toString());
         user.setEmail(signUpEmail.getText().toString());
         user.setPassword(signUpPassword.getText().toString());
@@ -360,7 +357,7 @@ public class MainActivity extends AppCompatActivity
 
     private void onAuthenticationSucess(FirebaseUser mUser) {
         // Write new user
-        saveNewUser(mUser.getUid(), user.getName(), user.getPhoneNumber(), user.getEmail(), user.getPassword());
+        saveNewUser(mUser.getUid(), user.getDisplayName(), user.getPhoneNumber(), user.getEmail(), user.getPassword());
         signOut();
         signup.dismiss();
         // Go to LoginActivity
@@ -472,9 +469,13 @@ public class MainActivity extends AppCompatActivity
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("user_id",uid);
                             intent.putExtra("profile_picture",image);
-                            logged=true;
-                            startActivity(intent);
-                            finish();
+                            navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
+                            navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
+                            navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
+                            login.dismiss();
+                            setUserInfos(uid);
+                            //startActivity(intent);
+                            //finish();
                         }
 
                         hideProgressDialog();
@@ -559,9 +560,8 @@ public class MainActivity extends AppCompatActivity
 
     public void setUserInfos(String uid){
 
-
         TextView displayName = (TextView) navigationView.findViewById(R.id.userDisplayName);
-        displayName.setText(mAuth.getCurrentUser().getEmail().toString());
+        displayName.setText(mAuth.getCurrentUser().getEmail());
 
         /*mRef.child("users").child(uid).child("name").addValueEventListener(new ValueEventListener() {
             @Override
