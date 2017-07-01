@@ -42,7 +42,8 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".DetailProduto"></activity>
+        <activity android:name=".DetailProduto" />
+        <activity android:name=".ListaProdutos"></activity>
     </application>
 
 </manifest>

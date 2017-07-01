@@ -1,8 +1,10 @@
 package compadres.burgueria.app.compadres;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,7 +18,7 @@ public class DetailProduto extends AppCompatActivity {
         setContentView(R.layout.activity_detail_produto);
 
         Intent intent = getIntent();
-        Produto objeto = (Produto) intent.getSerializableExtra("objeto");
+        final Produto objeto = (Produto) intent.getSerializableExtra("objeto");
 
         TextView nome = (TextView) findViewById(R.id.detailNome);
         TextView descricao = (TextView) findViewById(R.id.detailDescricao);
@@ -31,6 +33,15 @@ public class DetailProduto extends AppCompatActivity {
         descricao.setText(objeto.getDescricao());
         preco.setText(""+objeto.getPreco());
         imagem.setImageResource(objeto.getImagem());
+
+        btnAddCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DetailProduto.this, ListaProdutos.class);
+                intent.putExtra("item", objeto);
+                startActivity(intent);
+            }
+        });
 
 
     }
