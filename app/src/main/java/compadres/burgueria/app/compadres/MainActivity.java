@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "CompadreS";
     NavigationView navigationView;
+    FloatingActionButton fab;
     View headerView;
     public User user;
     private FirebaseAuth mAuth;
@@ -93,14 +94,14 @@ public class MainActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         mAuth = FirebaseAuth.getInstance();
         mRef=new Firebase("https://compadres-26673.firebaseio.com/");
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.car);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });*/
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -547,6 +548,7 @@ public class MainActivity extends AppCompatActivity
                             navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
                             navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
                             navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
+                            fab.findViewById(R.id.car).setVisibility(View.VISIBLE);
                             login.dismiss();
                             setUserInfos(uid);
                             //startActivity(intent);
