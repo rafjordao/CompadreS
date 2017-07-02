@@ -5,11 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -25,63 +23,51 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.KeyStore;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = "CompadreS";
+    protected static final String TAG = "CompadreS";
     NavigationView navigationView;
     FloatingActionButton fab;
     View headerView;
     public User user;
-    private FirebaseAuth mAuth;
+    protected FirebaseAuth mAuth;
     boolean logged=false;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressDialog mProgressDialog;
+    protected FirebaseAuth.AuthStateListener mAuthListener;
+    protected ProgressDialog mProgressDialog;
+    protected DatabaseReference mDatabase;
+    protected FirebaseDatabase database;
     //Add YOUR Firebase Reference URL instead of the following URL
     Firebase mRef;
 
     //FaceBook callbackManager
-    private CallbackManager callbackManager;
+    protected CallbackManager callbackManager;
     //
-
-    Button cancelBtn;
-    Button loginBtn;
-    LoginButton facebookLoginButton;
-    TextView signUpLink;
-
-    EditText email;
-    EditText password;
-    EditText signUpName;
-    EditText signUpPassword;
-    EditText signUpPhone;
-    EditText signUpEmail;
-
-    Dialog signup;
-    Dialog login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +80,10 @@ public class MainActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         mAuth = FirebaseAuth.getInstance();
         mRef=new Firebase("https://compadres-26673.firebaseio.com/");
+
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference();
+
         fab = (FloatingActionButton) findViewById(R.id.car);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,9 +110,20 @@ public class MainActivity extends AppCompatActivity
                 if (mUser != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
+                    navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
+                    fab.findViewById(R.id.car).setVisibility(View.VISIBLE);
+                    navigationView.findViewById(R.id.login_logout).setVisibility(View.INVISIBLE);
+                    setUserInfos(mUser.getUid());
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    navigationView.getMenu().findItem(R.id.nav_order).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(false);
+                    fab.findViewById(R.id.car).setVisibility(View.INVISIBLE);
+                    headerView.findViewById(R.id.login_logout).setVisibility(View.VISIBLE);
+                    TextView displayName = (TextView) headerView.findViewById(R.id.userDisplayName);
+                    displayName.setText(R.string.userName);
                 }
 
             }
@@ -194,7 +195,10 @@ public class MainActivity extends AppCompatActivity
             CardapioFragment cardapio = new CardapioFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.conteudo_fragment, cardapio).commit();
         } else if (id == R.id.nav_order) {
-
+            Pedido pedido = new Pedido(new Date());
+            pedido.addCartItem(new Produto("Coisa pra Cinema","Hamburguer","pão, 2 carnes, queijo, bacon, cebola e molho opcional cheddar",13.00f,R.drawable.burguer_image),5);
+            pedido.addCartItem(new Produto("Soda","Bebida","350 ml",4.00f,R.drawable.bebida_image),5);
+            mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("pedidos").child(pedido.getData_pedido()).setValue(pedido);
         } else if (id == R.id.nav_sair) {
             signOut();
         }
@@ -204,212 +208,36 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onStart();
-    }
-
     public void onLabelClick(View v){
         if(v.getId()==R.id.login_logout){
-            /*logged=!logged;
-            geraToast(""+logged);*/
-            login = new Dialog(this);
-            login.setContentView(R.layout.login_dialog);
-            login.setTitle("Login");
+            LoginDialog lg = new LoginDialog();
+            lg.show(getSupportFragmentManager().beginTransaction(),"loginDialog");
+        }
+    }
 
-            loginBtn = (Button) login.findViewById(R.id.btnLogin);
-            cancelBtn = (Button) login.findViewById(R.id.btnCancel);
-
-            signUpLink = (TextView) login.findViewById(R.id.link_signup);
-
-            email = (EditText) login.findViewById(R.id.txtUsername);
-            password = (EditText) login.findViewById(R.id.txtPassword);
-
-            /*/Facebook login
-            facebookLoginButton = (LoginButton) findViewById(R.id.button_facebook_login);
-            //facebookLoginButton.setReadPermissions("email");
-            facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                    signInWithFacebook(loginResult.getAccessToken());
-                }
-
-                @Override
-                public void onCancel() {
-                    Log.d(TAG, "facebook:onCancel");
-                }
-
-                @Override
-                public void onError(FacebookException error) {
-                    Log.d(TAG, "facebook:onError", error);
-                }
-            });
-            /**/
-
-            loginBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v){
-                    setUpUser();
-                    signIn(email.getText().toString(), password.getText().toString());
-                }
-            });
-
-            signUpLink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    signUpDialog();
-                }
-            });
-
-            cancelBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    login.dismiss();
-                }
-            });
-
-            login.show();
-
+    public void turnOffLoginDialog(){
+        LoginDialog lg = (LoginDialog) getSupportFragmentManager().findFragmentByTag("loginDialog");
+        if(lg!=null){
+            lg.dismiss();
+            getSupportFragmentManager().beginTransaction().remove(lg);
         }
     }
 
     public void signUpDialog(){
-
-        signup = new Dialog(this);
-        signup.setContentView(R.layout.signup_dialog);
-
-        signUpName = (EditText) signup.findViewById(R.id.signUpName);
-        signUpPhone = (EditText) signup.findViewById(R.id.signUpPhone);
-        signUpEmail = (EditText) signup.findViewById(R.id.signUpEmail);
-        signUpPassword = (EditText) signup.findViewById(R.id.signUpPassword);
-
-        Button signUpOk= (Button) signup.findViewById(R.id.btnSignUpOk);
-        Button signUpCancel = (Button) signup.findViewById(R.id.btnSignUpCancel);
-
-        signUpOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                createNewAccount(signUpEmail.getText().toString(), signUpPassword.getText().toString());
-                showProgressDialog();
-            }
-        });
-
-        signUpCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                signup.dismiss();
-            }
-        });
-
-        signup.show();
+        SignUpDialog lg = new SignUpDialog();
+        lg.show(getSupportFragmentManager().beginTransaction(),"signUpDialog");
     }
 
-    protected void setSignUpUser() {
-        user = new User();
-        user.setDisplayName(signUpName.getText().toString());
-        user.setPhoneNumber(signUpPhone.getText().toString());
-        user.setEmail(signUpEmail.getText().toString());
-        user.setPassword(signUpPassword.getText().toString());
-    }
-
-    private void createNewAccount(String email, String password) {
-        Log.d(TAG, "createNewAccount:" + email);
-        if (!validateSignUpForm()) {
-            return;
+    public void turnOffSignUpDialog(){
+        SignUpDialog sud = (SignUpDialog) getSupportFragmentManager().findFragmentByTag("signUpDialog");
+        if(sud!=null){
+            sud.dismiss();
+            getSupportFragmentManager().beginTransaction().remove(sud);
         }
-        //This method sets up a new User by fetching the user entered details.
-        setSignUpUser();
-        //This method  method  takes in an email address and password, validates them and then creates a new user
-        // with the createUserWithEmailAndPassword method.
-        // If the new account was created, the user is also signed in, and the AuthStateListener runs the onAuthStateChanged callback.
-        // In the callback, you can use the getCurrentUser method to get the user's account data.
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            onAuthenticationSucess(task.getResult().getUser());
-                        }
-
-
-                    }
-                });
-
     }
 
-    private void onAuthenticationSucess(FirebaseUser mUser) {
-        // Write new user
-        saveNewUser(mUser.getUid(), user.getDisplayName(), user.getPhoneNumber(), user.getEmail(), user.getPassword());
-        signOut();
-        signup.dismiss();
-        // Go to LoginActivity
-        //startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        //finish();
-    }
-
-    private void saveNewUser(String userId, String name, String phone, String email, String password) {
-        User user = new User(userId,name,phone,email,password);
-
-        mRef.child("users").child(userId).setValue(user);
-    }
-
-    private void signOut() {
+    protected void signOut() {
         mAuth.signOut();
-        navigationView.getMenu().findItem(R.id.nav_carte).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_order).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(false);
-        headerView.findViewById(R.id.login_logout).setVisibility(View.VISIBLE);
-        TextView displayName = (TextView) headerView.findViewById(R.id.userDisplayName);
-        displayName.setText(R.string.userName);
-    }
-    //This method, validates email address and password
-    private boolean validateSignUpForm() {
-        boolean valid = true;
-
-        String userEmail = signUpEmail.getText().toString();
-        if (TextUtils.isEmpty(userEmail)) {
-            signUpEmail.setError("Required.");
-            valid = false;
-        } else {
-            signUpEmail.setError(null);
-        }
-
-        String userPassword = signUpPassword.getText().toString();
-        if (TextUtils.isEmpty(userPassword)) {
-            signUpPassword.setError("Required.");
-            valid = false;
-        } else {
-            signUpPassword.setError(null);
-        }
-
-        String userPhone = signUpPhone.getText().toString();
-        if (TextUtils.isEmpty(userPhone)) {
-            signUpPhone.setError("Required.");
-            valid = false;
-        } else {
-            signUpPhone.setError(null);
-        }
-
-        return valid;
     }
 
     @Override
@@ -418,6 +246,18 @@ public class MainActivity extends AppCompatActivity
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        signOut();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     public void showProgressDialog() {
@@ -473,7 +313,7 @@ public class MainActivity extends AppCompatActivity
                             navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
                             navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
                             navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
-                            login.dismiss();
+                            //login.dismiss();
                             setUserInfos(uid);
                             //startActivity(intent);
                             //finish();
@@ -482,28 +322,6 @@ public class MainActivity extends AppCompatActivity
                         hideProgressDialog();
                     }
                 });
-    }
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String userEmail = email.getText().toString();
-        if (TextUtils.isEmpty(userEmail)) {
-            email.setError("Required.");
-            valid = false;
-        } else {
-            email.setError(null);
-        }
-
-        String userPassword = password.getText().toString();
-        if (TextUtils.isEmpty(userPassword)) {
-            password.setError("Required.");
-            valid = false;
-        } else {
-            password.setError(null);
-        }
-
-        return valid;
     }
 
     //FaceBook
@@ -514,70 +332,11 @@ public class MainActivity extends AppCompatActivity
     }
     //
 
-    protected void setUpUser() {
-        user = new User();
-        user.setEmail(email.getText().toString());
-        user.setPassword(password.getText().toString());
-    }
-
-    private void signIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
-        showProgressDialog();
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            String uid = mAuth.getCurrentUser().getUid();
-                            intent.putExtra("user_id", uid);
-                            navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
-                            navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
-                            navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
-                            fab.findViewById(R.id.car).setVisibility(View.VISIBLE);
-                            login.dismiss();
-                            setUserInfos(uid);
-                            //startActivity(intent);
-                            //finish();
-                        }
-                        hideProgressDialog();
-                    }
-                });
-        //
-    }
-
     public void setUserInfos(String uid){
 
-        TextView displayName = (TextView) navigationView.findViewById(R.id.userDisplayName);
-        displayName.setText(mAuth.getCurrentUser().getEmail());
+        final TextView displayName = (TextView) navigationView.findViewById(R.id.userDisplayName);
+        displayName.setText(mAuth.getCurrentUser().getDisplayName());
 
-        /*mRef.child("users").child(uid).child("name").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Toast.makeText(getApplicationContext(), "" + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });*/
-
-        navigationView.findViewById(R.id.login_logout).setVisibility(View.INVISIBLE);
     }
 
 }
