@@ -11,7 +11,7 @@
             android:id="@+id/nav_carte"
             android:icon="@drawable/ic_menu_carte"
             android:title="Cardápio"
-            android:visible="false"/>
+            android:visible="true"/>
         <item
             android:id="@+id/nav_order"
             android:icon="@drawable/ic_menu_order"
@@ -25,7 +25,8 @@
     </group>
 
     <item android:title=""
-	android:visible="false">
+	android:visible="false"
+        android:id="@+id/nav_sair_item">
         <menu>
             <item
                 android:id="@+id/nav_sair"

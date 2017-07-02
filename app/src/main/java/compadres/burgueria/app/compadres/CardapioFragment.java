@@ -1,6 +1,7 @@
 package compadres.burgueria.app.compadres;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,18 +51,34 @@ public class CardapioFragment extends Fragment {
                     case R.id.navigation_hamburgueres:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Hamburgueres", Toast.LENGTH_SHORT).show();
-                        ArrayList<Hamburguer> hamburguers = addHamburguer();
-                        adapter = new HamburguerAdapter(getActivity(),hamburguers);
+                        final ArrayList<Produto> hamburguers = addHamburguer();
+                        adapter = new ProdutoAdapter(getActivity(),hamburguers);
                         lista.setAdapter(adapter);
+                        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                                intent.putExtra("objeto", hamburguers.get(position));
+                                startActivity(intent);
+                            }
+                        });
                         return true;
                     case R.id.navigation_bebida:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Bebidas", Toast.LENGTH_SHORT).show();
                         //adapter = ArrayAdapter.createFromResource(getActivity(), R.array.bebidas, android.R.layout.simple_list_item_1);
                         //lista.setAdapter(adapter);
-                        ArrayList<Bebida> bebidas = addBebida();
-                        adapter = new BebidaAdapter(getActivity(),bebidas);
+                        final ArrayList<Produto> bebidas = addBebida();
+                        adapter = new ProdutoAdapter(getActivity(),bebidas);
                         lista.setAdapter(adapter);
+                        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                                intent.putExtra("objeto", bebidas.get(position));
+                                startActivity(intent);
+                            }
+                        });
                         return true;
                 }
                 return false;
@@ -71,42 +89,50 @@ public class CardapioFragment extends Fragment {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //setAdapterHamburger (o codigo que ta no switch case acima - isolar em um metodo)
-        ArrayList<Hamburguer> hamburguers = addHamburguer();
-        adapter = new HamburguerAdapter(getActivity(),hamburguers);
+        final ArrayList<Produto> hamburguers = addHamburguer();
+        adapter = new ProdutoAdapter(getActivity(),hamburguers);
         lista.setAdapter(adapter);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailProduto.class);
+                intent.putExtra("objeto", hamburguers.get(position));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
 
 
-    private ArrayList<Hamburguer> addHamburguer(){
-        ArrayList<Hamburguer> burguers = new ArrayList<Hamburguer>();
-        Hamburguer h = new Hamburguer("Compadre'S","pão, carne ,queijo, cebola caramelizada e molho do Compadre'S",7.00f,R.drawable.burguer_image);
+    private ArrayList<Produto> addHamburguer(){
+        ArrayList<Produto> burguers = new ArrayList<Produto>();
+        Produto h = new Produto("Compadre'S","Hamburguer","pão, carne ,queijo, cebola caramelizada e molho do Compadre'S",7.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Comadre","pão, carne, queijo, alface, tomate e molho do Compadre'S",7.00f,R.drawable.burguer_image);
+        h = new Produto("Comadre","Hamburguer","pão, carne, queijo, alface, tomate e molho do Compadre'S",7.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("1% Vagabundo","pão, frango, queijo, ovo, alface, tomate e molho opcional( bechamel ou Compadre'S)",8.00f,R.drawable.burguer_image);
+        h = new Produto("1% Vagabundo","Hamburguer","pão, frango, queijo, ovo, alface, tomate e molho opcional( bechamel ou Compadre'S)",8.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Gordelícia","pão, carne, queijo, bacon, alface, tomate e molho opcional( barbecue ou Compadre'S)",9.00f,R.drawable.burguer_image);
+        h = new Produto("Gordelícia","Hamburguer","pão, carne, queijo, bacon, alface, tomate e molho opcional( barbecue ou Compadre'S)",9.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Gota Serena","pão, carne, queijo, bacon, ovo, cebola caramelizada, alface, tomate e molho opcional( barbecue ou picante)",10.00f,R.drawable.burguer_image);
+        h = new Produto("Gota Serena","Hamburguer","pão, carne, queijo, bacon, ovo, cebola caramelizada, alface, tomate e molho opcional( barbecue ou picante)",10.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Mái Meninu","pão, carne, queijo, calabresa, alface, tomate, cebola e molho do opcional( barbecue ou Compadre'S)",9.00f,R.drawable.burguer_image);
+        h = new Produto("Mái Meninu","Hamburguer","pão, carne, queijo, calabresa, alface, tomate, cebola e molho do opcional( barbecue ou Compadre'S)",9.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Danadin","pão, hambúrguer de toscana mista, queijo, bacon, alface, tomate e molho opcional( maionese de limão ou Compadre'S)",10.00f,R.drawable.burguer_image);
+        h = new Produto("Danadin","Hamburguer","pão, hambúrguer de toscana mista, queijo, bacon, alface, tomate e molho opcional( maionese de limão ou Compadre'S)",10.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Arretado","pão, carne, queijo coalho, charque desfiada, cebola e molho opcional( maionese de alho ou Compadre'S)",12.00f,R.drawable.burguer_image);
+        h = new Produto("Arretado","Hamburguer","pão, carne, queijo coalho, charque desfiada, cebola e molho opcional( maionese de alho ou Compadre'S)",12.00f,R.drawable.burguer_image);
         burguers.add(h);
-        h = new Hamburguer("Coisa pra Cinema","pão, 2 carnes, queijo, bacon, cebola e molho opcional cheddar",13.00f,R.drawable.burguer_image);
+        h = new Produto("Coisa pra Cinema","Hamburguer","pão, 2 carnes, queijo, bacon, cebola e molho opcional cheddar",13.00f,R.drawable.burguer_image);
         burguers.add(h);
         return burguers;
     }
 
-    private ArrayList<Bebida> addBebida(){
-        ArrayList<Bebida> bebidas = new ArrayList<Bebida>();
-        Bebida b = new Bebida("Coca-Cola","350 ml",4.00f,R.drawable.bebida_image);
+    private ArrayList<Produto> addBebida(){
+        ArrayList<Produto> bebidas = new ArrayList<Produto>();
+        Produto b = new Produto("Coca-Cola","Bebida","350 ml",4.00f,R.drawable.bebida_image);
         bebidas.add(b);
-        b = new Bebida("Soda","350 ml",4.00f,R.drawable.bebida_image);
+        b = new Produto("Soda","Bebida","350 ml",4.00f,R.drawable.bebida_image);
         bebidas.add(b);
         return bebidas;
     }

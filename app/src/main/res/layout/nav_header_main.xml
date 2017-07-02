@@ -20,6 +20,7 @@
         app:srcCompat="@drawable/ic_user" />
 
     <TextView
+        android:id="@+id/userDisplayName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
@@ -27,8 +28,9 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/login_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onLabelClick"
         android:text="@string/loginLink" />
 </LinearLayout>
