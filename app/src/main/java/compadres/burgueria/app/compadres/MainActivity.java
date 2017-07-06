@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     public User user;
     protected FirebaseAuth mAuth;
     boolean logged=false;
+    static Pedido pedido;
     protected FirebaseAuth.AuthStateListener mAuthListener;
     protected ProgressDialog mProgressDialog;
     protected DatabaseReference mDatabase;

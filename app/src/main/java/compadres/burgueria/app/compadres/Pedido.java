@@ -61,8 +61,8 @@ public class Pedido {
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(data_pedido);
     }
 
-    public double getValor() {
-        return valor;
+    public String getValor() {
+        return valor+"";
     }
 
 }
