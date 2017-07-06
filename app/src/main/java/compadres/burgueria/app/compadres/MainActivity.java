@@ -2,7 +2,9 @@ package compadres.burgueria.app.compadres;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -70,12 +72,17 @@ public class MainActivity extends AppCompatActivity
     protected CallbackManager callbackManager;
     //
 
+    SharedPreferences sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //shared
+        sharedPref = getSharedPreferences("UserName", Context.MODE_PRIVATE);
 
         //Previous versions of Firebase
         Firebase.setAndroidContext(this);
@@ -114,7 +121,7 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
                     fab.findViewById(R.id.car).setVisibility(View.VISIBLE);
-                    navigationView.findViewById(R.id.login_logout).setVisibility(View.INVISIBLE);
+                    headerView.findViewById(R.id.login_logout).setVisibility(View.INVISIBLE);
                     setUserInfos(mUser.getUid());
                 } else {
                     // User is signed out
@@ -277,7 +284,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void signInWithFacebook(AccessToken token) {
+    /*private void signInWithFacebook(AccessToken token) {
         Log.d(TAG, "signInWithFacebook:" + token);
 
         showProgressDialog();
@@ -323,7 +330,7 @@ public class MainActivity extends AppCompatActivity
                         hideProgressDialog();
                     }
                 });
-    }
+    }*/
 
     //FaceBook
     @Override
@@ -335,8 +342,16 @@ public class MainActivity extends AppCompatActivity
 
     public void setUserInfos(String uid){
 
-        final TextView displayName = (TextView) navigationView.findViewById(R.id.userDisplayName);
-        displayName.setText(mAuth.getCurrentUser().getDisplayName());
+        TextView displayName = (TextView) headerView.findViewById(R.id.userDisplayName);
+        String name;
+        if (mAuthListener != null){
+            name = mAuth.getCurrentUser().getDisplayName();
+            SharedPreferences.Editor ed = sharedPref.edit();
+            ed.putString("userName",name);
+        } else {
+            name = sharedPref.getString("userName","Olá Visitante!");
+        }
+        displayName.setText(name);
 
     }
 

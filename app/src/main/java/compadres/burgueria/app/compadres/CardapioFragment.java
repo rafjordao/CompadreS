@@ -2,11 +2,13 @@ package compadres.burgueria.app.compadres;
 
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +20,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.annotations.NotNull;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -104,6 +117,36 @@ public class CardapioFragment extends Fragment {
         return view;
     }
 
+    /*private ArrayList<Produto> addProduct(@NotNull final Callback callback, String type){
+
+        final ArrayList<Produto> produtos = new ArrayList<Produto>();
+        Query productQuery = ((MainActivity)getActivity()).mDatabase.getRef().child("produtos").child(type);
+
+        productQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data:dataSnapshot.getChildren()){
+
+                    produtos.add(data.getValue(Produto.class));
+                    Log.d(((MainActivity)getActivity()).TAG,data.toString());
+                }
+
+                for(Produto p:produtos){
+                    Log.d(((MainActivity)getActivity()).TAG,p.toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ((MainActivity)getActivity()).showProgressDialog();
+        while(produtos.size()==0){}
+        ((MainActivity)getActivity()).hideProgressDialog();
+        return produtos;
+    }*/
 
     private ArrayList<Produto> addHamburguer(){
         ArrayList<Produto> burguers = new ArrayList<Produto>();
@@ -125,6 +168,7 @@ public class CardapioFragment extends Fragment {
         burguers.add(h);
         h = new Produto("Coisa pra Cinema","Hamburguer","pão, 2 carnes, queijo, bacon, cebola e molho opcional cheddar",13.00f,R.drawable.burguer_image);
         burguers.add(h);
+        //return addProduct("Hamburguer");
         return burguers;
     }
 
@@ -134,6 +178,8 @@ public class CardapioFragment extends Fragment {
         bebidas.add(b);
         b = new Produto("Soda","Bebida","350 ml",4.00f,R.drawable.bebida_image);
         bebidas.add(b);
+        //return addProduct("Bebida");
         return bebidas;
     }
+
 }

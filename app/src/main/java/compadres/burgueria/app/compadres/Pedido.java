@@ -14,6 +14,8 @@ public class Pedido {
     HashMap<String,Integer> produtos;
     double valor;
 
+    Pedido(){}
+
     Pedido(Date data_pedido){
         this.data_pedido=data_pedido;
         this.produtos=new HashMap<String,Integer>();

@@ -13,6 +13,8 @@ public class Produto implements Serializable{
     private float preco;
     private int imagem; // vai armazenar o identificador do recurso
 
+    public Produto(){}
+
     public Produto(String nome, String tipo, String descricao,float preco,int imagem){
         this.nome = nome;
         this.tipo = tipo;
@@ -59,5 +61,10 @@ public class Produto implements Serializable{
 
     public void setImagem(int imagem) {
         this.imagem = imagem;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " | " + tipo + " | " + descricao + " | " + preco + " | " + imagem;
     }
 }
