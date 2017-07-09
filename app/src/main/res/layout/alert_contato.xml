@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:id="@+id/linearLayout2"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="18dp">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/image_whatsapp"
+            android:src="@drawable/ic_whatsapp"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_alignTop="@+id/linearLayout2" />
+        <TextView
+            android:id="@+id/whatsapp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="81 99848-8469"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:id="@+id/linearLayout3"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="18dp">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/image_facebook"
+            android:src="@drawable/ic_facebook"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_alignTop="@+id/linearLayout3" />
+        <TextView
+            android:id="@+id/facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="/Compadresburgers"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:id="@+id/linearLayout4"
+        android:layout_marginTop="110dp"
+        android:layout_marginBottom="18dp">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/image_instagram"
+            android:src="@drawable/ic_instagram"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_alignTop="@+id/linearLayout2" />
+        <TextView
+            android:id="@+id/instagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="\@compadresburguers"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title" />
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>
