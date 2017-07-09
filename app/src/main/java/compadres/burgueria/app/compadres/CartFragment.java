@@ -48,10 +48,8 @@ public class CartFragment extends Fragment {
             String json = pedidoPref.getString("Pedido","");
             pedido = gson.fromJson(json,Pedido.class);
         }
-        ArrayList<Pedido> pedidos = new ArrayList<Pedido>();
-        pedidos.add(pedido);
 
-        adapter = new PedidoAdapter(getActivity(),pedidos);
+        adapter = new PedidoAdapter(getActivity(),pedido);
         lista.setAdapter(adapter);
         /*lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

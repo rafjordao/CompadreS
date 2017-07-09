@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="Total:"
                 android:layout_marginLeft="20dp"
-                android:id="@+id/total_pedido"
+                android:id="@+id/total"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title"/>
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
                     android:textColor="@color/opened"
                     android:textSize="20dp" />
                 <TextView
-                    android:id="@+id/item_preco"
+                    android:id="@+id/total_pedido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
