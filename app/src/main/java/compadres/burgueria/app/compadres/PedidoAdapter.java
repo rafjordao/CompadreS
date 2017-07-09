@@ -21,7 +21,7 @@ public class PedidoAdapter extends ArrayAdapter<Pedido> {
     private final ArrayList<Pedido> elementos;
 
     public PedidoAdapter(Context context, ArrayList<Pedido> elementos){
-        super(context,R.layout.cardapio_linha, elementos);
+        super(context,R.layout.pedido_linha, (ArrayList)elementos.get(0).getProdutos().keySet());
         this.context = context;
         this.elementos = elementos;
     }
@@ -37,6 +37,11 @@ public class PedidoAdapter extends ArrayAdapter<Pedido> {
         TextView quantidade = (TextView) rowView.findViewById(R.id.quantidade_item);
         ImageButton addItem = (ImageButton) rowView.findViewById(R.id.qtd_add_item);
         ImageButton removeItem = (ImageButton) rowView.findViewById(R.id.qtd_remove_item);
+
+        nomeItem.setText(elementos.get(0).getProdutos().keySet().toArray()[position].toString());
+        precoItem.setText(elementos.get(0).getValores().values().toArray()[position].toString());
+        quantidade.setText(elementos.get(0).getProdutos().values().toArray()[position].toString());
+
 
         //Pedido vem em um Hash
 

@@ -1,10 +1,13 @@
 package compadres.burgueria.app.compadres;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,25 +23,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
-import com.facebook.login.widget.LoginButton;
 import com.firebase.client.Firebase;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
+import com.firebase.client.core.Tag;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,8 +45,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.Date;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     View headerView;
     public User user;
     protected FirebaseAuth mAuth;
-    boolean logged=false;
     static Pedido pedido;
     protected FirebaseAuth.AuthStateListener mAuthListener;
     protected ProgressDialog mProgressDialog;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity
     //
 
     SharedPreferences sharedPref;
+    SharedPreferences pedidoPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +83,20 @@ public class MainActivity extends AppCompatActivity
 
         //shared
         sharedPref = getSharedPreferences("UserName", Context.MODE_PRIVATE);
+        pedidoPref = getSharedPreferences("Pedido",MODE_PRIVATE);
+        Editor prefEditor = pedidoPref.edit();
+        Gson gson = new Gson();
+        if(!pedidoPref.getString("Pedido","").isEmpty()){
+            String json = pedidoPref.getString("Pedido","");
+            pedido = gson.fromJson(json,Pedido.class);
+        }
 
         //Previous versions of Firebase
         Firebase.setAndroidContext(this);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         mRef=new Firebase("https://compadres-26673.firebaseio.com/");
+        mRef.keepSynced(true);
 
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
@@ -96,8 +105,12 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                /*CartFragment cart = new CartFragment();
+                getFragmentManager().beginTransaction().replace(R.id.conteudo_fragment,cart);*/
+                Intent intent = new Intent(getApplicationContext(), ListaProdutos.class);
+                startActivity(intent);
             }
         });
 
@@ -120,14 +133,35 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
                     navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
                     fab.findViewById(R.id.car).setVisibility(View.VISIBLE);
                     headerView.findViewById(R.id.login_logout).setVisibility(View.INVISIBLE);
                     setUserInfos(mUser.getUid());
+                    if(pedidoPref.getString("Pedido","").isEmpty()){
+                        Log.d(TAG,pedidoPref.getString("Pedido",""));
+                        Query pendingCart = mDatabase.child("users").child(mUser.getUid()).child("pedido_pendente");
+                        pendingCart.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                pedido = dataSnapshot.getValue(Pedido.class);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    } else {
+                        Gson gson = new Gson();
+                        String json = pedidoPref.getString("Pedido","");
+                        pedido = gson.fromJson(json,Pedido.class);
+                    }
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                     navigationView.getMenu().findItem(R.id.nav_order).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_carte).setVisible(false);
                     fab.findViewById(R.id.car).setVisibility(View.INVISIBLE);
                     headerView.findViewById(R.id.login_logout).setVisibility(View.VISIBLE);
                     TextView displayName = (TextView) headerView.findViewById(R.id.userDisplayName);
@@ -171,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            logged=true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -201,12 +235,24 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_carte) {
             CardapioFragment cardapio = new CardapioFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.conteudo_fragment, cardapio).commit();
+            new LoadInternetDependentFragment().execute(cardapio);
+
         } else if (id == R.id.nav_order) {
-            Pedido pedido = new Pedido(new Date());
-            pedido.addCartItem(new Produto("Coisa pra Cinema","Hamburguer","pão, 2 carnes, queijo, bacon, cebola e molho opcional cheddar",13.00f,R.drawable.burguer_image),5);
-            pedido.addCartItem(new Produto("Soda","Bebida","350 ml",4.00f,R.drawable.bebida_image),5);
-            mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("pedidos").child(pedido.getData_pedido()).setValue(pedido);
+            Gson gson = new Gson();
+            String json = pedidoPref.getString("Pedido","");
+            Log.d(TAG,json);
+            pedido = gson.fromJson(json,Pedido.class);
+            if(pedido!=null) {
+                HashMap<String, Integer> lista = pedido.getProdutos();
+                for (Map.Entry<String, Integer> produto : lista.entrySet()) {
+                    Log.d(TAG, "produto: " + produto.getKey() + " | qtd: " + produto.getValue().toString());
+                }
+                Log.d(TAG, "Status: " + pedido.getStatus());
+                Log.d(TAG, "Valor: " + pedido.getValor());
+                Editor ed = pedidoPref.edit();
+                ed.putString("Pedido", "").commit();
+            }
+
         } else if (id == R.id.nav_sair) {
             signOut();
         }
@@ -219,7 +265,7 @@ public class MainActivity extends AppCompatActivity
     public void onLabelClick(View v){
         if(v.getId()==R.id.login_logout){
             LoginDialog lg = new LoginDialog();
-            lg.show(getSupportFragmentManager().beginTransaction(),"loginDialog");
+            lg.show(getSupportFragmentManager(),"loginDialog");
         }
     }
 
@@ -233,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
     public void signUpDialog(){
         SignUpDialog lg = new SignUpDialog();
-        lg.show(getSupportFragmentManager().beginTransaction(),"signUpDialog");
+        lg.show(getSupportFragmentManager(),"signUpDialog");
     }
 
     public void turnOffSignUpDialog(){
@@ -352,6 +398,59 @@ public class MainActivity extends AppCompatActivity
             name = sharedPref.getString("userName","Olá Visitante!");
         }
         displayName.setText(name);
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    public boolean hasActiveInternetConnection() {
+        if (isNetworkAvailable()) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com/generate_204").openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                return (urlc.getResponseCode() == 204 &&
+                        urlc.getContentLength() == 0);
+            } catch (IOException e) {
+                Log.e(TAG, "Error checking internet connection", e);
+            }
+        } else {
+            Log.d(TAG, "No network available!");
+        }
+        return false;
+    }
+
+    class LoadInternetDependentFragment extends AsyncTask<Fragment, Void , Boolean> {
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog();
+        }
+
+        @Override
+        protected Boolean doInBackground(Fragment... fragments) {
+            Boolean haveInternet = hasActiveInternetConnection();
+            if(haveInternet) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.conteudo_fragment, fragments[0]).commit();
+            }
+            return haveInternet;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            hideProgressDialog();
+            if(!aBoolean){
+                Toast.makeText(getApplicationContext(),
+                        "Você precisa de conexão com a internet para acessar o Cardápio", Toast.LENGTH_LONG).show();
+            }
+        }
 
     }
 

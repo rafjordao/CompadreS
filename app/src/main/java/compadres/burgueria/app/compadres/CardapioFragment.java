@@ -64,7 +64,7 @@ public class CardapioFragment extends Fragment {
                     case R.id.navigation_hamburgueres:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Hamburgueres", Toast.LENGTH_SHORT).show();
-                        final ArrayList<Produto> hamburguers = addHamburguer();
+                        /*final ArrayList<Produto> hamburguers = addHamburguer();
                         adapter = new ProdutoAdapter(getActivity(),hamburguers);
                         lista.setAdapter(adapter);
                         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,14 +74,15 @@ public class CardapioFragment extends Fragment {
                                 intent.putExtra("objeto", hamburguers.get(position));
                                 startActivity(intent);
                             }
-                        });
+                        });*/
+                        addProduct("Hamburguer");
                         return true;
                     case R.id.navigation_bebida:
                         Toast.makeText(getActivity().getApplicationContext(),
                                 "Bebidas", Toast.LENGTH_SHORT).show();
                         //adapter = ArrayAdapter.createFromResource(getActivity(), R.array.bebidas, android.R.layout.simple_list_item_1);
                         //lista.setAdapter(adapter);
-                        final ArrayList<Produto> bebidas = addBebida();
+                        /*final ArrayList<Produto> bebidas = addBebida();
                         adapter = new ProdutoAdapter(getActivity(),bebidas);
                         lista.setAdapter(adapter);
                         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,7 +92,8 @@ public class CardapioFragment extends Fragment {
                                 intent.putExtra("objeto", bebidas.get(position));
                                 startActivity(intent);
                             }
-                        });
+                        });*/
+                        addProduct("Bebida");
                         return true;
                 }
                 return false;
@@ -102,7 +104,7 @@ public class CardapioFragment extends Fragment {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //setAdapterHamburger (o codigo que ta no switch case acima - isolar em um metodo)
-        final ArrayList<Produto> hamburguers = addHamburguer();
+        /*final ArrayList<Produto> hamburguers = addHamburguer();
         adapter = new ProdutoAdapter(getActivity(),hamburguers);
         lista.setAdapter(adapter);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,16 +114,17 @@ public class CardapioFragment extends Fragment {
                 intent.putExtra("objeto", hamburguers.get(position));
                 startActivity(intent);
             }
-        });
+        });*/
+        addProduct("Hamburguer");
 
         return view;
     }
 
-    /*private ArrayList<Produto> addProduct(@NotNull final Callback callback, String type){
+    private void addProduct(String type){
 
         final ArrayList<Produto> produtos = new ArrayList<Produto>();
         Query productQuery = ((MainActivity)getActivity()).mDatabase.getRef().child("produtos").child(type);
-
+        ((MainActivity)getActivity()).showProgressDialog();
         productQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -131,9 +134,20 @@ public class CardapioFragment extends Fragment {
                     Log.d(((MainActivity)getActivity()).TAG,data.toString());
                 }
 
-                for(Produto p:produtos){
+                adapter = new ProdutoAdapter(getActivity(),produtos);
+                lista.setAdapter(adapter);
+                lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(getActivity(), DetailProduto.class);
+                        intent.putExtra("objeto", produtos.get(position));
+                        startActivity(intent);
+                    }
+                });
+                ((MainActivity)getActivity()).hideProgressDialog();
+                /*for(Produto p:produtos){
                     Log.d(((MainActivity)getActivity()).TAG,p.toString());
-                }
+                }*/
 
             }
 
@@ -142,11 +156,7 @@ public class CardapioFragment extends Fragment {
 
             }
         });
-        ((MainActivity)getActivity()).showProgressDialog();
-        while(produtos.size()==0){}
-        ((MainActivity)getActivity()).hideProgressDialog();
-        return produtos;
-    }*/
+    }
 
     private ArrayList<Produto> addHamburguer(){
         ArrayList<Produto> burguers = new ArrayList<Produto>();

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +52,9 @@ public class LoginDialog extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().setCanceledOnTouchOutside(false);
 
-        View view = inflater.inflate(R.layout.login_dialog,container);
+        View view = inflater.inflate(R.layout.login_dialog,container,false);
+
+        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth);
 
         loginBtn = (Button) view.findViewById(R.id.btnLogin);
         cancelBtn = (Button) view.findViewById(R.id.btnCancel);
@@ -146,8 +150,8 @@ public class LoginDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Window window = getDialog().getWindow();
-        window.setLayout(500, 350);
-        window.setGravity(Gravity.CENTER);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        getDialog().getWindow().setLayout((width*9)/10,(height*36)/100);
     }
 }

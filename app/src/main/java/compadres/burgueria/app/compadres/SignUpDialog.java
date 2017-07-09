@@ -186,9 +186,9 @@ public class SignUpDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Window window = getDialog().getWindow();
-        window.setLayout(500, 450);
-        window.setGravity(Gravity.CENTER);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        getDialog().getWindow().setLayout((width*9)/10,(height*45)/100);
     }
 
 }
