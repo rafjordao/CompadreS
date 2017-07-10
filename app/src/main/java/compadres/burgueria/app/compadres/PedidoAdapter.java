@@ -91,7 +91,11 @@ public class PedidoAdapter extends ArrayAdapter<String> {
                     ed.putString("Pedido",json).commit();
                     ((ListaProdutos)context).updateTotalValue();
                 } else {
-
+                    elementos.removeCartItem(new Produto(nomeItem.getText().toString(),null,null,Float.parseFloat(list.get(position).get(1)),1),1);
+                    String json = gson.toJson(elementos);
+                    ed.putString("Pedido",json).commit();
+                    ((ListaProdutos)context).updateTotalValue();
+                    ((ListaProdutos)context).updateLista();
                 }
             }
         });

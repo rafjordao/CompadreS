@@ -107,12 +107,17 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                /*CartFragment cart = new CartFragment();
-                getFragmentManager().beginTransaction().replace(R.id.conteudo_fragment,cart);*/
-                Intent intent = new Intent(getApplicationContext(), ListaProdutos.class);
-                startActivity(intent);
+                Gson gson = new Gson();
+                if(!pedidoPref.getString("Pedido","").isEmpty()){
+                    String json = pedidoPref.getString("Pedido","");
+                    pedido = gson.fromJson(json,Pedido.class);
+                }
+                if(pedido!=null) {
+                    Intent intent = new Intent(getApplicationContext(), ListaProdutos.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(),"Sem nenhum item no carrinho!",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -145,7 +150,9 @@ public class MainActivity extends AppCompatActivity
                         pendingCart.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                pedido = dataSnapshot.getValue(Pedido.class);
+                                if(dataSnapshot.exists()){
+                                    pedido = dataSnapshot.getValue(Pedido.class);
+                                }
                             }
 
                             @Override
@@ -251,20 +258,7 @@ public class MainActivity extends AppCompatActivity
             new LoadInternetDependentFragment().execute(cardapio);
 
         } else if (id == R.id.nav_order) {
-            Gson gson = new Gson();
-            String json = pedidoPref.getString("Pedido","");
-            Log.d(TAG,json);
-            pedido = gson.fromJson(json,Pedido.class);
-            if(pedido!=null) {
-                HashMap<String, Integer> lista = pedido.getProdutos();
-                for (Map.Entry<String, Integer> produto : lista.entrySet()) {
-                    Log.d(TAG, "produto: " + produto.getKey() + " | qtd: " + produto.getValue().toString());
-                }
-                Log.d(TAG, "Status: " + pedido.getStatus());
-                Log.d(TAG, "Valor: " + pedido.getValor());
-                Editor ed = pedidoPref.edit();
-                ed.putString("Pedido", "").commit();
-            }
+            Toast.makeText(getApplicationContext(),"Em Construção!",Toast.LENGTH_LONG).show();
 
         } else if (id == R.id.nav_sair) {
             signOut();
@@ -343,53 +337,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*private void signInWithFacebook(AccessToken token) {
-        Log.d(TAG, "signInWithFacebook:" + token);
 
-        showProgressDialog();
-
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }else{
-                            String uid=task.getResult().getUser().getUid();
-                            String name=task.getResult().getUser().getDisplayName();
-                            String email=task.getResult().getUser().getEmail();
-                            String image=task.getResult().getUser().getPhotoUrl().toString();
-
-                            //Create a new User and Save it in Firebase database
-                            User user = new User(uid,name,null,email,null);
-
-                            mRef.child(uid).setValue(user);
-
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.putExtra("user_id",uid);
-                            intent.putExtra("profile_picture",image);
-                            navigationView.getMenu().findItem(R.id.nav_carte).setVisible(true);
-                            navigationView.getMenu().findItem(R.id.nav_order).setVisible(true);
-                            navigationView.getMenu().findItem(R.id.nav_sair_item).setVisible(true);
-                            //login.dismiss();
-                            setUserInfos(uid);
-                            //startActivity(intent);
-                            //finish();
-                        }
-
-                        hideProgressDialog();
-                    }
-                });
-    }*/
 
     //FaceBook
     @Override

@@ -20,6 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ public class ListaProdutos extends AppCompatActivity implements LocationListener
     SharedPreferences.Editor prefEditor;
     PedidoAdapter adapter;
     TextView valorTotal;
+    ListView lista;
 
     LocationManager lm;
     Location location;
@@ -43,7 +48,7 @@ public class ListaProdutos extends AppCompatActivity implements LocationListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_produtos);
 
-        ListView lista = (ListView) findViewById(R.id.lvListaProduto);
+        lista = (ListView) findViewById(R.id.lvListaProduto);
         valorTotal = (TextView) findViewById(R.id.total_pedido);
         Button finishCartButton = (Button) findViewById(R.id.finalizarCarrinho);
 
@@ -64,10 +69,32 @@ public class ListaProdutos extends AppCompatActivity implements LocationListener
         finishCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFinishDialog();
+                if(Double.parseDouble(pedido.getValor())==0){
+                    Toast.makeText(getApplicationContext(),"Sem nenhum item no carrinho!",Toast.LENGTH_LONG).show();
+                } else {
+                    showFinishDialog();
+                }
             }
         });
 
+    }
+
+    public void updateLista(){
+        Gson gson = new Gson();
+        if (!pedidoPref.getString("Pedido", "").isEmpty()) {
+            String json = pedidoPref.getString("Pedido", "");
+            pedido = gson.fromJson(json, Pedido.class);
+        }
+        if(Double.parseDouble(pedido.getValor())==0){
+            FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference nullCart = FirebaseDatabase.getInstance().getReference().child("user").child(mUser.getUid());
+            nullCart.child("pedido_pendente").removeValue();
+            prefEditor.putString("Pedido","");
+            Toast.makeText(getApplicationContext(),"Sem nenhum item no carrinho!",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        adapter = new PedidoAdapter(this,pedido);
+        lista.setAdapter(adapter);
     }
 
     public void updateTotalValue() {
