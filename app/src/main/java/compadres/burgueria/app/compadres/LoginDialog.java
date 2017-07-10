@@ -152,6 +152,6 @@ public class LoginDialog extends DialogFragment {
         super.onResume();
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        getDialog().getWindow().setLayout((width*9)/10,(height*36)/100);
+        getDialog().getWindow().setLayout((width*9)/10,LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 }

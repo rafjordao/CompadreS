@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -188,7 +189,7 @@ public class SignUpDialog extends DialogFragment {
         super.onResume();
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        getDialog().getWindow().setLayout((width*9)/10,(height*45)/100);
+        getDialog().getWindow().setLayout((width*9)/10, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
 }
