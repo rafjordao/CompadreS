@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:hint="Cidade"/>
     <EditText android:layout_height="wrap_content"
-        android:inputType="text" android:id="@+id/estado"
+        android:inputType="text" android:id="@+id/numero"
         android:layout_width="match_parent"
         android:hint="Estado"/>
     <EditText android:layout_height="wrap_content"

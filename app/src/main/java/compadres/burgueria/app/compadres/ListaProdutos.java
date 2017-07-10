@@ -85,11 +85,14 @@ public class ListaProdutos extends AppCompatActivity implements LocationListener
         fd.show(getSupportFragmentManager(), "finishDialog");
     }
 
-    public void turnOffFinishDialog() {
+    public void turnOffFinishDialog(String code) {
         FinishDialog fd = (FinishDialog) getSupportFragmentManager().findFragmentByTag("finishDialog");
         if (fd != null) {
             fd.dismiss();
             getSupportFragmentManager().beginTransaction().remove(fd);
+        }
+        if(code.equals("success")){
+            finish();
         }
     }
 

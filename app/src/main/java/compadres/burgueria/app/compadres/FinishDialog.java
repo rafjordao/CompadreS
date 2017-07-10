@@ -7,18 +7,27 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,7 +41,7 @@ public class FinishDialog extends DialogFragment {
     EditText rua;
     EditText bairro;
     EditText cidade;
-    EditText estado;
+    EditText numero;
     EditText cep;
     Spinner metodoDePagamento;
     Button btnFinishOk;
@@ -58,11 +67,18 @@ public class FinishDialog extends DialogFragment {
         rua = (EditText) view.findViewById(R.id.rua);
         bairro = (EditText) view.findViewById(R.id.bairro);
         cidade = (EditText) view.findViewById(R.id.cidade);
-        estado = (EditText) view.findViewById(R.id.estado);
+        numero = (EditText) view.findViewById(R.id.numero);
         cep = (EditText) view.findViewById(R.id.cep);
         metodoDePagamento = (Spinner) view.findViewById(R.id.metodoDePagamento);
         btnFinishOk = (Button) view.findViewById(R.id.btnFinishOk);
         btnFinishCancel = (Button) view.findViewById(R.id.btnFinishCancel);
+
+        String[] metodos = new String[] {"Cartão de Crédito","Dinheiro"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(((ListaProdutos)getActivity()),
+                android.R.layout.simple_spinner_item, metodos);
+
+        metodoDePagamento.setAdapter(adapter);
 
         gpsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,10 +101,35 @@ public class FinishDialog extends DialogFragment {
         btnFinishCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((ListaProdutos)getActivity()).turnOffFinishDialog();
+                ((ListaProdutos)getActivity()).turnOffFinishDialog("");
             }
         });
 
+        btnFinishOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!validateAdress()){
+                    return;
+                } else {
+                    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+                    DatabaseReference finishCart = FirebaseDatabase.getInstance().getReference().child("user").child(mUser.getUid());
+                    ((ListaProdutos) getActivity()).pedido.setData_pedido(new Date());
+                    ((ListaProdutos) getActivity()).pedido.setStatus("Pedido Feito");
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).setValue(((ListaProdutos) getActivity()).pedido);
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("endereço").child("rua").setValue(rua.getText().toString());
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("endereço").child("bairro").setValue(bairro.getText().toString());
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("endereço").child("cidade").setValue(cidade.getText().toString());
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("endereço").child("numero").setValue(numero.getText().toString());
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("endereço").child("cep").setValue(cep.getText().toString());
+                    finishCart.child("pedidos").child(((ListaProdutos) getActivity()).pedido.getData_pedido()).child("modoPagamento").setValue(metodoDePagamento.getSelectedItem().toString());
+                    finishCart.child("pedido_pendente").removeValue();
+                    ((ListaProdutos) getActivity()).prefEditor.putString("Pedido", "").commit();
+                    ((ListaProdutos) getActivity()).pedido=null;
+                    Toast.makeText(((ListaProdutos)getActivity()),"Pedido Feito com Sucesso!",Toast.LENGTH_LONG).show();
+                    ((ListaProdutos)getActivity()).turnOffFinishDialog("success");
+                }
+            }
+        });
 
         return view;
     }
@@ -97,10 +138,54 @@ public class FinishDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
         int width = getResources().getDisplayMetrics().widthPixels;
-        int height = getResources().getDisplayMetrics().heightPixels;
         getDialog().getWindow().setLayout((width*9)/10, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
+    private boolean validateAdress() {
+        boolean valid = true;
+
+        String casaRua = rua.getText().toString();
+        if (TextUtils.isEmpty(casaRua)) {
+            rua.setError("Required.");
+            valid = false;
+        } else {
+            rua.setError(null);
+        }
+
+        String casaBairro = bairro.getText().toString();
+        if (TextUtils.isEmpty(casaBairro)) {
+            bairro.setError("Required.");
+            valid = false;
+        } else {
+            bairro.setError(null);
+        }
+
+        String casaCidade = cidade.getText().toString();
+        if (TextUtils.isEmpty(casaCidade)) {
+            cidade.setError("Required.");
+            valid = false;
+        } else {
+            cidade.setError(null);
+        }
+
+        String casaNumero = numero.getText().toString();
+        if (TextUtils.isEmpty(casaNumero)) {
+            numero.setError("Required.");
+            valid = false;
+        } else {
+            numero.setError(null);
+        }
+
+        String casaCep = cep.getText().toString();
+        if (TextUtils.isEmpty(casaCep)) {
+            cep.setError("Required.");
+            valid = false;
+        } else {
+            cep.setError(null);
+        }
+
+        return valid;
+    }
 
 
 }
